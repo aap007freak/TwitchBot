@@ -1,0 +1,106 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.chart.CategoryAxis?>
+<?import javafx.scene.chart.LineChart?>
+<?import javafx.scene.chart.NumberAxis?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.Menu?>
+<?import javafx.scene.control.MenuBar?>
+<?import javafx.scene.control.MenuItem?>
+<?import javafx.scene.control.RadioMenuItem?>
+<?import javafx.scene.control.Separator?>
+<?import javafx.scene.control.SeparatorMenuItem?>
+<?import javafx.scene.control.Tab?>
+<?import javafx.scene.control.TabPane?>
+<?import javafx.scene.control.TextArea?>
+<?import javafx.scene.layout.VBox?>
+<?import javafx.scene.text.Font?>
+
+<VBox maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="600.0" prefWidth="800.0" xmlns="http://javafx.com/javafx/8.0.111" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.antonleagre.twitchbot.Controller">
+   <children>
+      <MenuBar>
+        <menus>
+          <Menu mnemonicParsing="false" text="Connect">
+            <items>
+              <MenuItem mnemonicParsing="false" text="Connect To Twitch" />
+                  <MenuItem disable="true" mnemonicParsing="false" text="Disconnect" />
+                  <SeparatorMenuItem mnemonicParsing="false" />
+                  <MenuItem mnemonicParsing="false" text="Connection Settings" />
+            </items>
+          </Menu>
+          <Menu mnemonicParsing="false" text="Tabs">
+               <items>
+                  <MenuItem mnemonicParsing="false" onAction="#tabMenuEnableAllClicked" text="Enable All" />
+                  <SeparatorMenuItem mnemonicParsing="false" />
+                  <RadioMenuItem fx:id="tabMenuChat" mnemonicParsing="false" onAction="#tabMenuChatClicked" selected="true" text="Chat tab" />
+                  <RadioMenuItem fx:id="tabMenuStats" mnemonicParsing="false" onAction="#tabMenuStatsClicked" selected="true" text="Statistics tab" />
+                  <RadioMenuItem fx:id="tabMenuPreview" mnemonicParsing="false" onAction="#tabMenuPreviewClicked" selected="true" text="Stream Preview tab" />
+                  <RadioMenuItem fx:id="tabMenuBot" mnemonicParsing="false" onAction="#tabMenuBotClicked" selected="true" text="Bot tab" />
+               </items>
+          </Menu>
+          <Menu mnemonicParsing="false" text="Help">
+            <items>
+              <MenuItem mnemonicParsing="false" text="About" />
+            </items>
+          </Menu>
+        </menus>
+      </MenuBar>
+      <TabPane fx:id="tabs" prefHeight="575.0" prefWidth="800.0" tabClosingPolicy="UNAVAILABLE">
+        <tabs>
+          <Tab fx:id="chatTab" text="Chat" />
+          <Tab fx:id="statsTab" text="Stats">
+               <content>
+                  <VBox prefHeight="200.0" prefWidth="100.0">
+                     <children>
+                        <VBox prefHeight="200.0" prefWidth="100.0">
+                           <children>
+                              <Label text="Total Viewers">
+                                 <font>
+                                    <Font size="14.0" />
+                                 </font>
+                                 <VBox.margin>
+                                    <Insets left="10.0" />
+                                 </VBox.margin>
+                              </Label>
+                              <LineChart fx:id="chart">
+                                 <xAxis>
+                                    <CategoryAxis side="BOTTOM" />
+                                 </xAxis>
+                                 <yAxis>
+                                    <NumberAxis side="LEFT" />
+                                 </yAxis>
+                              </LineChart>
+                           </children>
+                           <VBox.margin>
+                              <Insets top="10.0" />
+                           </VBox.margin>
+                        </VBox>
+                        <VBox prefHeight="200.0" prefWidth="100.0">
+                           <children>
+                              <VBox prefHeight="200.0" prefWidth="100.0">
+                                 <children>
+                                    <Label text="Label" />
+                                    <LineChart>
+                                       <xAxis>
+                                          <CategoryAxis side="BOTTOM" />
+                                       </xAxis>
+                                       <yAxis>
+                                          <NumberAxis side="LEFT" />
+                                       </yAxis>
+                                    </LineChart>
+                                 </children>
+                              </VBox>
+                           </children>
+                        </VBox>
+                     </children>
+                  </VBox>
+               </content></Tab>
+            <Tab fx:id="previewTab" text="Stream Preview" />
+            <Tab fx:id="botTab" text="Bot" />
+        </tabs>
+      </TabPane>
+      <Separator prefWidth="200.0" />
+      <TextArea editable="false" prefHeight="200.0" prefWidth="200.0" wrapText="true" />
+   </children>
+</VBox>
