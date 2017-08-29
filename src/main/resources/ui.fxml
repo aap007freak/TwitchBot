@@ -23,8 +23,8 @@
         <menus>
           <Menu mnemonicParsing="false" text="Connect">
             <items>
-              <MenuItem mnemonicParsing="false" text="Connect To Twitch" />
-                  <MenuItem disable="true" mnemonicParsing="false" text="Disconnect" />
+              <MenuItem fx:id="connectMenuConnect" mnemonicParsing="false" onAction="#connectMenuConnectClicked" text="Connect To Twitch" />
+                  <MenuItem fx:id="connectMenuDisconnect" disable="true" mnemonicParsing="false" onAction="#connectMenuDisconnectClicked" text="Disconnect" />
                   <SeparatorMenuItem mnemonicParsing="false" />
                   <MenuItem mnemonicParsing="false" text="Connection Settings" />
             </items>
@@ -48,7 +48,10 @@
       </MenuBar>
       <TabPane fx:id="tabs" prefHeight="575.0" prefWidth="800.0" tabClosingPolicy="UNAVAILABLE">
         <tabs>
-          <Tab fx:id="chatTab" text="Chat" />
+          <Tab fx:id="chatTab" text="Chat">
+               <content>
+                  <TextArea fx:id="id" prefHeight="200.0" prefWidth="200.0" />
+               </content></Tab>
           <Tab fx:id="statsTab" text="Stats">
                <content>
                   <VBox prefHeight="200.0" prefWidth="100.0">

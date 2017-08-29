@@ -1,12 +1,14 @@
 package com.antonleagre.twitchbot;
 
+import com.gikk.twirk.Twirk;
+import com.gikk.twirk.TwirkBuilder;
+import com.gikk.twirk.events.TwirkListenerBaseImpl;
+import com.gikk.twirk.types.twitchMessage.TwitchMessage;
+import com.gikk.twirk.types.users.TwitchUser;
 import javafx.fxml.FXML;
 import javafx.geometry.HPos;
 import javafx.geometry.VPos;
 import javafx.scene.Node;
-import javafx.scene.chart.LineChart;
-import javafx.scene.chart.NumberAxis;
-import javafx.scene.chart.XYChart;
 import javafx.scene.control.*;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.Priority;
@@ -14,8 +16,14 @@ import javafx.scene.layout.Region;
 import javafx.scene.web.WebEngine;
 import javafx.scene.web.WebView;
 
+import java.io.IOException;
+
 public class Controller{
+    //both of veetf2
     private final String clientID = "6px0arpv3gju31t8u6demwjm3u4l60";
+    private final String oAth = "oauth:y30zgzvjc4i7a36ctv55e1rdbfkwj6";
+
+    private Twirk twirk;
 
     @FXML
     private TabPane tabs;
@@ -23,6 +31,12 @@ public class Controller{
     private Tab botTab, statsTab, chatTab, previewTab;
     @FXML
     private RadioMenuItem tabMenuBot, tabMenuStats, tabMenuChat, tabMenuPreview;
+    @FXML
+    private MenuItem connectMenuConnect, connectMenuDisconnect;
+    @FXML
+    private TextArea id;
+
+
     private Browser streamPreview;
 
     //helper booleans
@@ -32,9 +46,12 @@ public class Controller{
     private boolean bPreviewTab = true;
 
     @FXML
-    public void initialize(){
-        streamPreview = new Browser("http:/player.twitch.tv/?veetf2"); // TODO: 29/08/2017 make this program argument or connect based
-        previewTab.setContent(streamPreview);
+    public void initialize() throws IOException, InterruptedException {
+        setupBot();
+        /*
+                streamPreview = new Browser("http:/player.twitch.tv/?veetf2"); // TODO: 29/08/2017 make this program argument or connect based
+        previewTab.setContent(streamPreview); todo make this work somehow
+         */
 
     }
     @FXML
@@ -108,9 +125,36 @@ public class Controller{
                 bChatTab = true;
             }
         }
+        
+        @FXML
+        protected void connectMenuConnectClicked() throws IOException, InterruptedException {
+            // TODO: 29/08/2017 add some sort of feedback
+            if(twirk != null && !twirk.isConnected()){
+                twirk.connect(); // TODO: 29/08/2017 catch clause with exception handling instead of throws clause
+                connectMenuConnect.setDisable(true);
+                connectMenuDisconnect.setDisable(false);
+            }
+        }
+        @FXML
+        protected void connectMenuDisconnectClicked(){
+            if(twirk != null && twirk.isConnected()){
+                twirk.disconnect();
+                connectMenuConnect.setDisable(false);
+                connectMenuDisconnect.setDisable(true);
+            }
+        }
 
 
+    private void setupBot(){
+        twirk = new TwirkBuilder("#veetf2", "veetf2", oAth).build(); //channel name (with num thing #, then username, then oath:)
 
+        twirk.addIrcListener(new TwirkListenerBaseImpl() {
+            @Override
+            public void onPrivMsg(TwitchUser sender, TwitchMessage message) {
+                id.appendText(sender.getDisplayName() + ": " + message.getContent() +"\n");
+            }
+        });
+    }
 }
 
  class Browser extends Region {
