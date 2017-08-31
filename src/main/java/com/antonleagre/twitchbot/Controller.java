@@ -5,6 +5,12 @@ import com.gikk.twirk.TwirkBuilder;
 import com.gikk.twirk.events.TwirkListenerBaseImpl;
 import com.gikk.twirk.types.twitchMessage.TwitchMessage;
 import com.gikk.twirk.types.users.TwitchUser;
+import com.jfoenix.controls.*;
+import com.jfoenix.controls.datamodels.treetable.RecursiveTreeObject;
+import javafx.application.Platform;
+import javafx.beans.property.SimpleStringProperty;
+import javafx.beans.property.StringProperty;
+import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.geometry.HPos;
 import javafx.geometry.VPos;
@@ -13,28 +19,48 @@ import javafx.scene.control.*;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.Priority;
 import javafx.scene.layout.Region;
+import javafx.scene.layout.StackPane;
+import javafx.scene.paint.Color;
 import javafx.scene.web.WebEngine;
 import javafx.scene.web.WebView;
 
+import javax.annotation.PostConstruct;
 import java.io.IOException;
 
 public class Controller{
+
+
     //both of veetf2
     private final String clientID = "6px0arpv3gju31t8u6demwjm3u4l60";
     private final String oAth = "oauth:y30zgzvjc4i7a36ctv55e1rdbfkwj6";
 
     private Twirk twirk;
+    private CommandHandler commandHandler;
 
     @FXML
     private TabPane tabs;
     @FXML
     private Tab botTab, statsTab, chatTab, previewTab;
+    //menu items
     @FXML
     private RadioMenuItem tabMenuBot, tabMenuStats, tabMenuChat, tabMenuPreview;
     @FXML
     private MenuItem connectMenuConnect, connectMenuDisconnect;
+    //tab items sorted by tab;
+    //chat tab
     @FXML
-    private TextArea id;
+    private TextArea chatTA;
+    //bottab
+    @FXML
+    private Label botConnectedLabel;
+    @FXML
+    private JFXTreeTableView<CommandHandler.Command> commandTable; //test
+    @FXML
+    private JFXTextField newComTrigger, newComCommand;
+    @FXML
+    private JFXButton newComAddButton;
+    @FXML
+    private TextArea logTA;
 
 
     private Browser streamPreview;
@@ -45,12 +71,16 @@ public class Controller{
     private boolean bChatTab = true;
     private boolean bPreviewTab = true;
 
-    @FXML
+    @FXML @PostConstruct
     public void initialize() throws IOException, InterruptedException {
+        commandHandler = new CommandHandler(commandTable);
+
+
         setupBot();
+        logTA.appendText("PROGRAM CORRECTLY INITALIZED\n");
         /*
                 streamPreview = new Browser("http:/player.twitch.tv/?veetf2"); // TODO: 29/08/2017 make this program argument or connect based
-        previewTab.setContent(streamPreview); todo make this work somehow
+                previewTab.setContent(streamPreview); todo make this work somehow
          */
 
     }
@@ -125,24 +155,56 @@ public class Controller{
                 bChatTab = true;
             }
         }
-        
-        @FXML
-        protected void connectMenuConnectClicked() throws IOException, InterruptedException {
-            // TODO: 29/08/2017 add some sort of feedback
-            if(twirk != null && !twirk.isConnected()){
-                twirk.connect(); // TODO: 29/08/2017 catch clause with exception handling instead of throws clause
-                connectMenuConnect.setDisable(true);
-                connectMenuDisconnect.setDisable(false);
-            }
+    @FXML
+    protected void connectMenuConnectClicked() throws IOException, InterruptedException {
+            logTA.appendText("TRYING TO CONNECT TO TWITCH\n");
+            new Thread(() -> {
+                // TODO: 29/08/2017 add some sort of feedback
+                if(twirk != null && !twirk.isConnected()){
+                    try {
+                        twirk.connect();
+                        Platform.runLater(() -> {
+                            connectMenuConnect.setDisable(true);
+                            connectMenuDisconnect.setDisable(false);
+                            botConnectedLabel.setTextFill(Color.GREEN);
+                            botConnectedLabel.setText("Connected!");
+                            logTA.appendText("CONNECTED TO TWITCH");
+                        });
+
+                    } catch (IOException | InterruptedException e) {
+                        Platform.runLater(() -> logTA.appendText("ERROR! CONNECTING FAILED... " + e.getCause().toString()));
+
+                        e.printStackTrace();
+                    }
+
+                }
+            }).start();
+
         }
-        @FXML
-        protected void connectMenuDisconnectClicked(){
-            if(twirk != null && twirk.isConnected()){
-                twirk.disconnect();
-                connectMenuConnect.setDisable(false);
-                connectMenuDisconnect.setDisable(true);
-            }
+    @FXML
+    protected void connectMenuDisconnectClicked(){
+            logTA.appendText("DISCONNECTING...\n");
+            new Thread(() -> {
+                if(twirk != null && twirk.isConnected()){
+                    twirk.disconnect();
+                    Platform.runLater(() -> {
+                        connectMenuConnect.setDisable(false);
+                        connectMenuDisconnect.setDisable(true);
+                        botConnectedLabel.setTextFill(Color.RED);
+                        botConnectedLabel.setText("Not connected!");
+                    });
+
+                }
+            }).start();
+
         }
+    @FXML
+    protected void botAddComClicked(ActionEvent actionEvent) {
+        // TODO: 31/08/2017 check for illegal characters
+        String triggerTex = newComTrigger.getText();
+        String commandTex = newComCommand.getText();
+        commandHandler.addCommand(triggerTex, commandTex);
+    }
 
 
     private void setupBot(){
@@ -151,10 +213,20 @@ public class Controller{
         twirk.addIrcListener(new TwirkListenerBaseImpl() {
             @Override
             public void onPrivMsg(TwitchUser sender, TwitchMessage message) {
-                id.appendText(sender.getDisplayName() + ": " + message.getContent() +"\n");
+
+                chatTA.appendText(sender.getDisplayName() + ": " + message.getContent() +"\n");
+
+                //check if the message is a command, and the updating the ui based of it.
+                String command = commandHandler.checkCommand(message.getContent());
+                if(command != null){
+                    System.out.println("command detected, we need to do stuff");
+                    twirk.channelMessage("@" + sender.getDisplayName() + ", " + command);
+                }
+
             }
         });
     }
+
 }
 
  class Browser extends Region {
@@ -194,6 +266,18 @@ public class Controller{
     }
     public void reload(){
         webEngine.load(url);
+    }
+}
+
+class User extends RecursiveTreeObject<User> {
+    StringProperty userName;
+    StringProperty age;
+    StringProperty department;
+
+    public User(String department, String age, String userName) {
+        this.department = new SimpleStringProperty(department) ;
+        this.userName = new SimpleStringProperty(userName);
+        this.age = new SimpleStringProperty(age);
     }
 }
 

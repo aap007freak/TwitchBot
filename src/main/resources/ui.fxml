@@ -1,5 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
+<?import com.jfoenix.controls.JFXButton?>
+<?import com.jfoenix.controls.JFXTextField?>
+<?import com.jfoenix.controls.JFXTreeTableView?>
 <?import javafx.geometry.Insets?>
 <?import javafx.scene.chart.CategoryAxis?>
 <?import javafx.scene.chart.LineChart?>
@@ -14,6 +17,8 @@
 <?import javafx.scene.control.Tab?>
 <?import javafx.scene.control.TabPane?>
 <?import javafx.scene.control.TextArea?>
+<?import javafx.scene.layout.AnchorPane?>
+<?import javafx.scene.layout.HBox?>
 <?import javafx.scene.layout.VBox?>
 <?import javafx.scene.text.Font?>
 
@@ -50,7 +55,7 @@
         <tabs>
           <Tab fx:id="chatTab" text="Chat">
                <content>
-                  <TextArea fx:id="id" prefHeight="200.0" prefWidth="200.0" />
+                  <TextArea fx:id="chatTA" prefHeight="200.0" prefWidth="200.0" />
                </content></Tab>
           <Tab fx:id="statsTab" text="Stats">
                <content>
@@ -100,10 +105,53 @@
                   </VBox>
                </content></Tab>
             <Tab fx:id="previewTab" text="Stream Preview" />
-            <Tab fx:id="botTab" text="Bot" />
+            <Tab fx:id="botTab" text="Bot">
+               <content>
+                  <AnchorPane prefHeight="200.0" prefWidth="200.0">
+                     <children>
+                        <HBox prefHeight="30.0" prefWidth="800.0">
+                           <children>
+                              <Label text="Bot Status: ">
+                                 <padding>
+                                    <Insets bottom="50.0" left="10.0" top="10.0" />
+                                 </padding>
+                                 <font>
+                                    <Font name="System Bold" size="18.0" />
+                                 </font>
+                              </Label>
+                              <Label fx:id="botConnectedLabel" text="Not Connected!" textFill="#ff0c0c">
+                                 <padding>
+                                    <Insets bottom="50.0" left="10.0" top="10.0" />
+                                 </padding>
+                                 <font>
+                                    <Font name="System Bold" size="18.0" />
+                                 </font>
+                              </Label>
+                           </children>
+                           <opaqueInsets>
+                              <Insets bottom="50.0" />
+                           </opaqueInsets>
+                        </HBox>
+                        <JFXTreeTableView fx:id="commandTable" layoutX="1.0" layoutY="44.0" prefHeight="270.0" prefWidth="800.0" stylesheets="@main.css" />
+                        <JFXTextField fx:id="newComTrigger" layoutX="8.0" layoutY="314.0" prefHeight="25.0" prefWidth="178.0" promptText="trigger" />
+                        <JFXTextField fx:id="newComCommand" layoutX="186.0" layoutY="314.0" prefHeight="25.0" prefWidth="500.0" promptText="command" />
+                        <JFXButton fx:id="newComButton" buttonType="RAISED" layoutX="686.0" layoutY="314.0" onAction="#botAddComClicked" prefHeight="25.0" prefWidth="113.0" text="Add!" />
+                     </children>
+                  </AnchorPane>
+               </content></Tab>
+            <Tab text="Music">
+              <content>
+                <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="200.0" />
+              </content>
+            </Tab>
+            <Tab text="Giveaway">
+              <content>
+                <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="200.0" />
+              </content>
+            </Tab>
         </tabs>
       </TabPane>
       <Separator prefWidth="200.0" />
-      <TextArea editable="false" prefHeight="200.0" prefWidth="200.0" wrapText="true" />
+      <TextArea fx:id="logTA" editable="false" prefHeight="200.0" prefWidth="200.0" wrapText="true" />
    </children>
 </VBox>
