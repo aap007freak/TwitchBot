@@ -10,9 +10,10 @@ import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.scene.control.TreeItem;
 
+
 public class CommandHandler {
 
-    // TODO: 31/08/2017 make commands USER_TYPE based (like mod or subsriber or smthing) 
+    // TODO: 31/08/2017 make commands USER_TYPE based (like mod or subsriber or smthing)
     JFXTreeTableView<Command> treeTableView;
     ObservableList<Command> commands;
 

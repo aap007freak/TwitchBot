@@ -5,21 +5,15 @@ import com.gikk.twirk.TwirkBuilder;
 import com.gikk.twirk.events.TwirkListenerBaseImpl;
 import com.gikk.twirk.types.twitchMessage.TwitchMessage;
 import com.gikk.twirk.types.users.TwitchUser;
-import com.jfoenix.controls.*;
-import com.jfoenix.controls.datamodels.treetable.RecursiveTreeObject;
+import com.jfoenix.controls.JFXTextField;
+import com.jfoenix.controls.JFXTreeTableView;
 import javafx.application.Platform;
-import javafx.beans.property.SimpleStringProperty;
-import javafx.beans.property.StringProperty;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.geometry.HPos;
 import javafx.geometry.VPos;
-import javafx.scene.Node;
 import javafx.scene.control.*;
-import javafx.scene.layout.HBox;
-import javafx.scene.layout.Priority;
 import javafx.scene.layout.Region;
-import javafx.scene.layout.StackPane;
 import javafx.scene.paint.Color;
 import javafx.scene.web.WebEngine;
 import javafx.scene.web.WebView;
@@ -39,6 +33,7 @@ public class Controller{
 
     @FXML
     private TabPane tabs;
+    // TODO: 31/08/2017 add tabs for the new tabs like music and giveaway
     @FXML
     private Tab botTab, statsTab, chatTab, previewTab;
     //menu items
@@ -57,8 +52,13 @@ public class Controller{
     private JFXTreeTableView<CommandHandler.Command> commandTable; //test
     @FXML
     private JFXTextField newComTrigger, newComCommand;
+
+    //giveawaytab
     @FXML
-    private JFXButton newComAddButton;
+    private Label giveawayStatus;
+
+
+    //log at the bottom
     @FXML
     private TextArea logTA;
 
@@ -205,6 +205,10 @@ public class Controller{
         String commandTex = newComCommand.getText();
         commandHandler.addCommand(triggerTex, commandTex);
     }
+    @FXML
+    protected void giveawayStartClicked(){
+        new GiveAwayHandler();
+    }
 
 
     private void setupBot(){
@@ -221,6 +225,7 @@ public class Controller{
                 if(command != null){
                     System.out.println("command detected, we need to do stuff");
                     twirk.channelMessage("@" + sender.getDisplayName() + ", " + command);
+                    logTA.appendText("Command detected for user: " + sender.getDisplayName());
                 }
 
             }
@@ -234,6 +239,7 @@ public class Controller{
     final WebView browser = new WebView();
     final WebEngine webEngine = browser.getEngine();
     String url;
+
     public Browser(String urlto) {
         this.url = urlto;
         //apply the styles
@@ -244,13 +250,6 @@ public class Controller{
         getChildren().add(browser);
 
     }
-
-    private Node createSpacer() {
-        Region spacer = new Region();
-        HBox.setHgrow(spacer, Priority.ALWAYS);
-        return spacer;
-    }
-
     @Override protected void layoutChildren() {
         double w = getWidth();
         double h = getHeight();
@@ -266,18 +265,6 @@ public class Controller{
     }
     public void reload(){
         webEngine.load(url);
-    }
-}
-
-class User extends RecursiveTreeObject<User> {
-    StringProperty userName;
-    StringProperty age;
-    StringProperty department;
-
-    public User(String department, String age, String userName) {
-        this.department = new SimpleStringProperty(department) ;
-        this.userName = new SimpleStringProperty(userName);
-        this.age = new SimpleStringProperty(age);
     }
 }
 
