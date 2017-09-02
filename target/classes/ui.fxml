@@ -182,10 +182,10 @@
                         </Label>
                         <Pane layoutX="470.0" layoutY="14.0" prefHeight="200.0" prefWidth="227.0">
                            <children>
-                              <JFXTextField layoutX="43.0" layoutY="67.0" prefHeight="25.0" prefWidth="179.0" promptText="prize?" />
-                              <JFXTextField layoutX="46.0" layoutY="109.0" prefHeight="25.0" prefWidth="178.0" promptText="number of winners?" />
-                              <JFXToggleButton layoutX="30.0" layoutY="-14.0" text="Chat alerts" />
-                              <JFXToggleButton layoutX="30.0" layoutY="23.0" text="Entering more than once" />
+                              <JFXTextField fx:id="giveawayPrizeField" layoutX="43.0" layoutY="67.0" prefHeight="25.0" prefWidth="179.0" promptText="prize?" />
+                              <JFXTextField fx:id="giveawayNumSecondsField" layoutX="46.0" layoutY="109.0" prefHeight="25.0" prefWidth="178.0" promptText="time? (in seconds)" />
+                              <JFXToggleButton fx:id="giveawayChatAlertsToggle" layoutX="30.0" layoutY="-14.0" text="Chat alerts" />
+                              <JFXToggleButton fx:id="giveawayEnteringToggle" layoutX="30.0" layoutY="23.0" text="Entering more than once" />
                               <JFXButton buttonType="RAISED" layoutX="43.0" layoutY="153.0" onAction="#giveawayStartClicked" prefHeight="25.0" prefWidth="179.0" ripplerFill="WHITE" style="-fx-background-color: #000000;" text="START GIVEAWAY" />
                            </children>
                         </Pane>

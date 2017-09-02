@@ -6,6 +6,7 @@ import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.stage.Stage;
+import javafx.stage.StageStyle;
 
 import java.io.IOException;
 
@@ -18,6 +19,7 @@ public class Main extends Application {
 
         primaryStage.setScene(new Scene(root, 800,600));
         primaryStage.setResizable(false);
+        primaryStage.initStyle(StageStyle.TRANSPARENT);
         primaryStage.setOnCloseRequest(event -> {
             Platform.exit();
             System.exit(0);

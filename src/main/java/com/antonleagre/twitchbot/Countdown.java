@@ -55,6 +55,13 @@ public class Countdown {
         this.verbose = false;
     }
 
+    public void onStep(Runnable runner){
+        this.stepRunnable = runner;
+    }
+    public void onFinish(Runnable runner){
+        this.finishRunnable = runner;
+    }
+
 
 
     public void start(){
@@ -77,24 +84,20 @@ public class Countdown {
                         else{ //smooth cycle
                             actualSeconds = countdownSeconds;
                             stepRunnable.run();
+
                             if(verbose) System.out.println("Running a countdown with: " + getCountdownTick() + " seconds remaining...");
-
-
                         }
-                        stepRunnable.run();
                     }
-                }, 1000,
-                totalSeconds * 100);
+                }, 0,
+                1000);
     }
 
     public void stop(){
         stopRequested = true;
     }
-
     public void reset(int amountOfSeconds){
         if(running){
             stop();
-
         }
         this.totalSeconds = amountOfSeconds;
         countdownSeconds = totalSeconds + 1;

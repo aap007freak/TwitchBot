@@ -6,6 +6,7 @@ import com.gikk.twirk.events.TwirkListenerBaseImpl;
 import com.gikk.twirk.types.twitchMessage.TwitchMessage;
 import com.gikk.twirk.types.users.TwitchUser;
 import com.jfoenix.controls.JFXTextField;
+import com.jfoenix.controls.JFXToggleButton;
 import com.jfoenix.controls.JFXTreeTableView;
 import javafx.application.Platform;
 import javafx.event.ActionEvent;
@@ -29,7 +30,9 @@ public class Controller{
     private final String oAth = "oauth:y30zgzvjc4i7a36ctv55e1rdbfkwj6";
 
     private Twirk twirk;
+
     private CommandHandler commandHandler;
+    private GiveAwayHandler giveAwayHandler;
 
     @FXML
     private TabPane tabs;
@@ -52,12 +55,17 @@ public class Controller{
     private JFXTreeTableView<CommandHandler.Command> commandTable; //test
     @FXML
     private JFXTextField newComTrigger, newComCommand;
-
     //giveawaytab
     @FXML
     private Label giveawayStatus;
-
-
+    @FXML
+    private JFXToggleButton giveawayChatAlertsToggle;
+    @FXML
+    private JFXToggleButton giveawayEnteringToggle;
+    @FXML
+    private JFXTextField giveawayPrizeField;
+    @FXML
+    private JFXTextField giveawayNumSecondsField;
     //log at the bottom
     @FXML
     private TextArea logTA;
@@ -73,10 +81,18 @@ public class Controller{
 
     @FXML @PostConstruct
     public void initialize() throws IOException, InterruptedException {
-        commandHandler = new CommandHandler(commandTable);
-
-
         setupBot();
+        commandHandler = new CommandHandler(commandTable);
+        giveAwayHandler = new GiveAwayHandler(twirk);
+
+        //some ui stuff i cant do int fxml
+        //here is et that the textfield can only inputted numbers
+        giveawayNumSecondsField.textProperty().addListener((observable, oldValue, newValue) -> {
+            if (!newValue.matches("\\d*")) {
+                giveawayNumSecondsField.setText(newValue.replaceAll("[^\\d]", ""));
+            }
+        });
+
         logTA.appendText("PROGRAM CORRECTLY INITALIZED\n");
         /*
                 streamPreview = new Browser("http:/player.twitch.tv/?veetf2"); // TODO: 29/08/2017 make this program argument or connect based
@@ -207,7 +223,19 @@ public class Controller{
     }
     @FXML
     protected void giveawayStartClicked(){
-        new GiveAwayHandler();
+        // TODO: 2/09/2017 nullpointerexceptions when user doenst type anything and presses the start button
+
+        int giveAwaySeconds = Integer.parseInt(giveawayNumSecondsField.getText()); //should already be ints see initialize method
+        boolean chatAlerts = giveawayChatAlertsToggle.isSelected();
+        boolean enteringMoreThanOnce = giveawayEnteringToggle.isSelected();
+        String prize = giveawayPrizeField.getText();
+
+        GiveAway giveAway = new GiveAway(giveAwaySeconds, enteringMoreThanOnce, chatAlerts, prize);
+        giveAwayHandler.startGiveaway(giveAway);
+
+        giveawayStatus.setTextFill(Color.GREEN);
+        giveawayStatus.setText("Running");
+        // TODO: 2/09/2017 switch this back once the giveaway is done or they are choosing or something
     }
 
 

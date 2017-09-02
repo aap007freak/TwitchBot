@@ -21,7 +21,7 @@ public class CommandHandler {
 
         this.treeTableView = treeTableView;
 
-
+        //create ui view
         JFXTreeTableColumn<Command, String> triggerCol = new JFXTreeTableColumn<>("Trigger for the command");
         triggerCol.setPrefWidth(150);
         triggerCol.setCellValueFactory(param -> param.getValue().getValue().trigger);
@@ -33,8 +33,7 @@ public class CommandHandler {
         commands = FXCollections.observableArrayList();
         // TODO: 31/08/2017 add default commands and program args commands here; (using commands.add..)
 
-
-        final TreeItem<Command> root = new RecursiveTreeItem<Command>(commands, RecursiveTreeObject::getChildren);
+        final TreeItem<Command> root = new RecursiveTreeItem<Command>(commands, RecursiveTreeObject::getChildren); //invisible root
 
         treeTableView.setRoot(root);
         treeTableView.setShowRoot(false);
